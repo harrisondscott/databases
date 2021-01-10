@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Install apt-transport
+    become: yes
+    apt: pkg=apt-transport-https state=latest update_cache=yes
+
+  - name: Install ca-certificates
+    become: yes
+    apt: pkg=ca-certificates state=latest update_cache=yes
+
+  - name: Install curl
+    become: yes
+    apt: pkg=curl state=latest update_cache=yes
+
+  - name: Install software-properties-common
+    become: yes
+    apt: pkg=software-properties-common state=latest update_cache=yes
+
+  - name: GPG key pull
+    become: yes
+    shell: curl -fsSL https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+
+  - name: add repository
+    become: yes
+    shell: sudo add-apt-repository "deb https://debian.neo4j.com stable 4.1"
+
+  - name: Install neo4j
+    become: yes
+    apt: pkg=neo4j state=latest update_cache=yes
+
+  - name: Install neo4j python
+    pip:
+      name: neo4j
