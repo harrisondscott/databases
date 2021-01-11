@@ -1,9 +1,13 @@
 #!/bin/bash
 query="USE mysql";
-password=`cat ~/.password`
+password="{{ mysql_pass }}" 
 create="CREATE USER harrison@'localhost' IDENTIFIED BY '$password'"
 permission="GRANT ALL PRIVILEGES ON *.* TO harrison@'localhost'"
+database="CREATE DATABASE weather"
+table="CREATE TABLE user_info(Username VARCHAR(40), Password VARCHAR(40), Favorite_Weather VARCHAR(40), ZIP VARCHAR(20));"
 mysql -uroot -e "$query"
 mysql -uroot -e "$create"
 mysql -uroot -e "$permission"
 mysql -e "flush privileges"
+mysql -uroot -e "$database"
+mysql -uroot -e "USE weather; $table"

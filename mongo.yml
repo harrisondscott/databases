@@ -1,12 +1,13 @@
 ---
-- hosts: localhost
+- hosts: ec2
   tasks:
   - name: Get mongo
-    shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+    become: yes
+    shell: wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
 
   - name: Add source
     become: yes
-    shell: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+    shell: echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
   - name: Install mongodb
     become: yes
@@ -15,3 +16,7 @@
   - name: Start mongo
     become: yes
     shell: "service mongod start"
+
+  - name: Install pymongo
+    pip:
+      name: pymongo

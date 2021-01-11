@@ -1,5 +1,7 @@
 ---
-- hosts: localhost
+- hosts: ec2
+  vars_files:
+    - vault
   tasks:
   - name: Install apt-transport
     become: yes
@@ -7,28 +9,32 @@
 
   - name: Install ca-certificates
     become: yes
-    apt: pkg=ca-certificates state=latest update_cache=yes
+    apt: pkg=ca-certificates state=latest update_cache=no
 
   - name: Install curl
     become: yes
-    apt: pkg=curl state=latest update_cache=yes
+    apt: pkg=curl state=latest update_cache=no
 
   - name: Install software-properties-common
     become: yes
-    apt: pkg=software-properties-common state=latest update_cache=yes
+    apt: pkg=software-properties-common state=latest update_cache=no
 
   - name: GPG key pull
     become: yes
-    shell: curl -fsSL https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
+    shell: curl -fsSL https://debian.neo4j.com/neotechnology.gpg.key | apt-key add -
 
   - name: add repository
     become: yes
-    shell: sudo add-apt-repository "deb https://debian.neo4j.com stable 4.1"
+    shell: add-apt-repository "deb https://debian.neo4j.com stable 4.1"
 
   - name: Install neo4j
     become: yes
-    apt: pkg=neo4j state=latest update_cache=yes
+    apt: pkg=neo4j state=latest update_cache=no
 
   - name: Install neo4j python
     pip:
       name: neo4j
+
+  - name: Set Initial neo4j pass
+    become: yes
+    shell: neo4j-admin set-initial-password "{{ mysql_pass }}"

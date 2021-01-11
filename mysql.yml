@@ -1,6 +1,13 @@
 ---
-- hosts: localhost
+- hosts: ec2
+  vars_files:
+    - vault
   tasks:
+  - name: Copy template file to node
+    template:
+      src: user.sh.j2
+      dest: ~/.user.sh
+      mode: 0744
   - name: Install MySQL
     apt: name=mysql-server update_cache=yes cache_valid_time=3600 state=present
     become: yes
@@ -15,4 +22,10 @@
       name: pymysql
   - name: Create mysql user
     become: yes
-    shell: ./user.sh
+    shell: ./.user.sh
+  - name: Install mysql dependencies
+    pip:
+      name: mysql-connector-python
+  - name: Install Pandas
+    pip:
+      name: pandas
